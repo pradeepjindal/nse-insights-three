@@ -1,0 +1,77 @@
+sqlDeliverySpike: >
+  SELECT
+      tdy.symbol symbol,
+      tdy.one_trade_date trade_date,
+      tdy.cmopen open,
+      tdy.cmhigh high,
+      tdy.cmlow low,
+      tdy.cmclose as close,
+      round(tdy.traded_qty / (yes.traded_qty/100),2) - 100 as traded_chg_prcnt,
+      round(tdy.delivered_qty / (yes.delivered_qty/100),2) - 100 as delivered_chg_prcnt,
+      round(tdy.cmhigh / (tdy.cmopen/100), 2) - 100 as hmo_prcnt,
+  	  round(tdy.cmlow / (tdy.cmopen/100), 2) - 100 as oml_prcnt
+    FROM
+      (
+      select *
+      from date_linking_view1 v1, cfd_data_view_a1 d1
+      where v1.One_trade_date = d1.trade_Date
+      ) tdy,
+      (
+      select *
+      from date_linking_view1 v2, cfd_data_view_a1 d2
+      where v2.two_trade_date = d2.trade_Date
+      ) yes
+    WHERE tdy.one_trade_date = yes.one_trade_Date and tdy.symbol = yes.symbol
+    ORDER BY tdy.symbol, tdy.one_trade_date
+
+sqlTomorrowHeroOrigianl: >
+  SELECT
+    tdy.one_rank tdy_rank, tdy.trade_Date tdy_trd_date, yes.one_rank yes_rank, yes.trade_Date yes_trd_date,
+    tdy.symbol tdy_symbol,
+    yes.symbol yes_symbol,
+    tdy.cmclose tdy_close,
+    yes.cmclose yes_close,
+    tdy.cmclose - yes.cmclose as close_chg,
+    round(tdy.cmclose / (yes.cmclose/100),2) - 100 as close_chg_prcnt,
+    tdy.cmatp tdy_atp,
+    yes.cmatp yes_atp,
+    tdy.cmatp - yes.cmatp as atp_chg,
+    round(tdy.cmatp / (yes.cmatp/100),2) - 100 as atp_chg_prcnt,
+    tdy.premium tdy_premium,
+    yes.premium yes_premium,
+    tdy.premium - yes.premium as premium_chg,
+    round(tdy.premium / (case when yes.premium/100 = 0 then 1 else yes.premium/100 end),2) - 100 as premium_chg_prcnt,
+    tdy.oi tdy_oi,
+    yes.oi yes_oi,
+    tdy.oi - yes.oi as oi_chg,
+    yes.oi/100 as oii,
+    tdy.oi / (yes.oi/100) as oi_chg_prcnt0,
+    tdy.oi / (yes.oi/100) - 100 as oi_chg_prcnt1,
+    round(tdy.oi / (yes.oi/100),2) - 100 as oi_chg_prcnt,
+    tdy.traded_qty tdy_traded,
+    yes.traded_qty yes_traded,
+    tdy.traded_qty - yes.traded_qty as traded_chg,
+    round(tdy.traded_qty / (yes.traded_qty/100),2) - 100 as traded_chg_prcnt,
+    tdy.delivered_qty tdy_delivered,
+    yes.delivered_qty yes_delivered,
+    tdy.delivered_qty - yes.delivered_qty as delivery_chg,
+    round(tdy.delivered_qty / (yes.delivered_qty/100),2) - 100 as delivered_chg_prcnt,
+    tdy.cmhigh tdyhigh,
+    tdy.cmhigh - yes.cmopen hmo,
+    round(tdy.cmhigh / (yes.cmopen/100),2) - 100 as hmo_prcnt,
+    tdy.cmopen tdyopen,
+    tdy.del_to_trd_ratio tdy_del_to_trd_ratio,
+    yes.del_to_trd_ratio yes_del_to_trd_ratio
+  FROM
+    (
+    select *
+    from date_linking_view1 v1, cfd_data_view_a1 d1
+    where v1.One_trade_date = d1.trade_Date
+    ) tdy,
+    (
+    select *
+    from date_linking_view1 v2, cfd_data_view_a1 d2
+    where v2.two_trade_date = d2.trade_Date
+    ) yes
+  WHERE tdy.one_trade_date = yes.one_trade_Date and tdy.symbol = yes.symbol
+  ORDER BY tdy.symbol, tdy.one_trade_date

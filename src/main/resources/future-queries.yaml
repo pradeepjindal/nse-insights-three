@@ -1,0 +1,5 @@
+sqlPivotOi: >
+  SELECT
+    symbol, trade_date, trade_date_rank, coalesce(oi_one,0) oi_one, coalesce(oi_two,0) oi_two, coalesce(oi_three,0) oi_three
+  FROM
+    pivot_oi_view1
