@@ -1,5 +1,7 @@
 package org.pra.nse.util;
 
+import org.pra.nse.ApCo;
+
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -37,9 +39,13 @@ public class DateUtils {
     }
 
     public static LocalDate toLocalDate(String date_yyyyMMdd) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return toLocalDate(date_yyyyMMdd, ApCo.DEFAULT_FILE_NAME_DATE_FORMAT);
+    }
+
+    public static LocalDate toLocalDate(String date, String format) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
         //convert String to LocalDate
-        return LocalDate.parse(date_yyyyMMdd, formatter);
+        return LocalDate.parse(date, formatter);
     }
 
     public static String extractDate(String inputString) {
@@ -62,20 +68,33 @@ public class DateUtils {
         }
     }
 
-    public static  String getDateStringFromPath(String fileNameWithPth) {
+    public static String getDateStringFromPath(String fileNameWithPth, String dateRegex) {
+        dateRegex = null == dateRegex ? ApCo.DEFAULT_FILE_NAME_DATE_REGEX : dateRegex;
         int count=0;
         String[] allMatches = new String[2];
-        String regex = "\\d{4}-\\d{2}-\\d{2}"; //2019-12-31
-        Matcher m = Pattern.compile(regex).matcher(fileNameWithPth);
+        //String regex = "\\d{4}-\\d{2}-\\d{2}"; //2019-12-31
+        Matcher m = Pattern.compile(dateRegex).matcher(fileNameWithPth);
         while (m.find()) {
             allMatches[count] = m.group();
         }
         return allMatches[0];
     }
 
-    public static  LocalDate getLocalDateFromPath(String fileNameWithPth) {
-        String dateStr = getDateStringFromPath(fileNameWithPth);
-        return (dateStr == null ? null : toLocalDate(dateStr));
+    public static LocalDate getLocalDateFromPath(String fileNameWithPth) {
+        return getLocalDateFromPath(fileNameWithPth, ApCo.DEFAULT_FILE_NAME_DATE_REGEX);
     }
 
+    public static LocalDate getLocalDateFromPath(String fileNameWithPth, String dateRegex) {
+        return getLocalDateFromPath(fileNameWithPth, dateRegex, ApCo.DEFAULT_FILE_NAME_DATE_FORMAT);
+    }
+
+    @org.jetbrains.annotations.Nullable
+    public static LocalDate getLocalDateFromPath(String fileNameWithPth, String dateRegex, String dateFormat) {
+        String dateStr = getDateStringFromPath(fileNameWithPth, dateRegex);
+        return (dateStr == null ? null : toLocalDate(dateStr, dateFormat));
+    }
+
+    public static boolean isItWeekend(LocalDate date) {
+        return "SATURDAY".equals(date.getDayOfWeek()) || "SUNDAY".equals(date.getDayOfWeek());
+    }
 }

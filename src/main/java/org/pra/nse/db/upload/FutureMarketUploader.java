@@ -58,7 +58,7 @@ public class FutureMarketUploader extends BaseUploader {
         }
 
         String fromFile = ApCo.FM_FILES_PATH + File.separator+ ApCo.PRA_FM_FILE_PREFIX +forDate+ ApCo.PRA_DATA_FILE_EXT;
-        LOGGER.info("FM-upload | looking for file Name along with path:[{}]",fromFile);
+        //LOGGER.info("FM-upload | looking for file Name along with path:[{}]",fromFile);
 
         if(nseFileUtils.isFileExist(fromFile)) {
             LOGGER.info("file exists: [{}]", fromFile);
@@ -71,7 +71,8 @@ public class FutureMarketUploader extends BaseUploader {
 
         NseFutureMarketTab futureTab = new NseFutureMarketTab();
         NseOptionMarketTab optionTab = new NseOptionMarketTab();
-        AtomicInteger totalRecordFailed = new AtomicInteger();
+        AtomicInteger recordSucceed = new AtomicInteger();
+        AtomicInteger recordFailed = new AtomicInteger();
         foBeanMap.values().forEach( source -> {
             try {
                 if("FUTSTK".equals(source.getInstrument()) || "FUTIDX".equals(source.getInstrument())) {
@@ -111,12 +112,14 @@ public class FutureMarketUploader extends BaseUploader {
                     optionTab.setTradeDate(DateUtils.toLocalDate(source.getTimestamp()));
                     optionMarketRepository.save(optionTab);
                 }
+                recordSucceed.incrementAndGet();
             }catch(DataIntegrityViolationException dive) {
-                totalRecordFailed.incrementAndGet();
+                recordFailed.incrementAndGet();
             }
 
         });
-        LOGGER.info("Total record failed: [{}]", totalRecordFailed.get());
+        LOGGER.info("Total record (Future): {}, Succeed: {}, failed: {}",
+                recordSucceed.get() + recordFailed.get(), recordSucceed.get(), recordFailed.get());
     }
 
 }

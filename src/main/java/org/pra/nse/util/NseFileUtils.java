@@ -152,7 +152,7 @@ public class NseFileUtils {
             return baseUrl + "/" + fileName.substring(4, 7) + "/" + fileName;
         }).collect(Collectors.toList());
         //String newUrl = baseUrl + "/" + localDate.getMonth().name().substring(0,3) + "/fo" + formatter.format(localDate).toUpperCase() + "bhav.csv.zip";
-        filesUrl.forEach(LOGGER::info);
+        //filesUrl.forEach(LOGGER::info);
         return filesUrl;
     }
     public List<String> constructFileDownloadUrl(String baseUrl, List<String> filesToBeDownloaded) {

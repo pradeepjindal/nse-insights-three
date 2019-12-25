@@ -51,7 +51,7 @@ public class PraNameUtils {
         return LocalDate.parse(localDate.toString(), dtf).toString();
     }
 
-    public void validate() {
+    public void validateDownload() {
         String cmDate = getLatestFileNameFor(ApCo.CM_FILES_PATH, ApCo.PRA_CM_FILE_PREFIX, ApCo.PRA_DATA_FILE_EXT, 1);
         cmDate = ProCo.extractDate(cmDate);
 

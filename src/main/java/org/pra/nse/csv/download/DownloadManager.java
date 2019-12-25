@@ -31,11 +31,11 @@ public class DownloadManager {
 
 //        cmDownloader.download(fromDate);
 //        LOGGER.info("--------------------");
-//        fmDownloader.download(fromDate);
+//        fmDownloader.downloadFromDate(fromDate);
 //        LOGGER.info("--------------------");
-//        dmDownloader.download(fromDate);
+//        dmDownloader.downloadFromDate(fromDate);
 //        LOGGER.info("--------------------");
-//        bpDownloader.download(fromDate);
+//        bpDownloader.downloadFromDate(fromDate);
 
         cmDownloader.downloadFromLast();
         LOGGER.info("--------------------");

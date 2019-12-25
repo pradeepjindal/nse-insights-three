@@ -55,7 +55,7 @@ public class ManishProcessor {
         String outputPathAndFileNameForDynamicFile = ProCo.outputPathAndFileNameForDynamicFile(ApCo.MANISH_FILE_NAME, foLatestFileName);
 
         if(nseFileUtils.isFileExist(outputPathAndFileNameForDynamicFile)) {
-            LOGGER.info("report already present (regeneration and email would be skipped): {}", outputPathAndFileNameForDynamicFile);
+            LOGGER.warn("report already present (regeneration and email would be skipped): {}", outputPathAndFileNameForDynamicFile);
             return;
         }
 

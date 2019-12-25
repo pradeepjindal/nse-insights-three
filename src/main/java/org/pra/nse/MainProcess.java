@@ -11,15 +11,16 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
-
 @Component
 public class MainProcess implements ApplicationRunner {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainProcess.class);
 
     private final NseFileUtils nseFileUtils;
     private final PraNameUtils praNameUtils;
+
     private final DownloadManager downloadManager;
     private final UploadManager uploadManager;
+    private final ReportManager reportManager;
 
     private final PradeepProcessor pradeepProcessor;
     private final PradeepProcessorB pradeepProcessorB;
@@ -27,9 +28,8 @@ public class MainProcess implements ApplicationRunner {
     private final ManishProcessorB manishProcessorB;
     private final DeliverySpikeReport reportsProcessorC;
 
-    public MainProcess(NseFileUtils nseFileUtils,
-                       PraNameUtils praNameUtils,
-                       DownloadManager downloadManager, UploadManager uploadManager,
+    public MainProcess(NseFileUtils nseFileUtils, PraNameUtils praNameUtils,
+                       DownloadManager downloadManager, UploadManager uploadManager, ReportManager reportManager,
                        PradeepProcessor pradeepProcessor,
                        PradeepProcessorB pradeepProcessorB,
                        ManishProcessor manishProcessor,
@@ -40,6 +40,7 @@ public class MainProcess implements ApplicationRunner {
 
         this.downloadManager = downloadManager;
         this.uploadManager = uploadManager;
+        this.reportManager = reportManager;
 
         this.pradeepProcessor = pradeepProcessor;
         this.pradeepProcessorB = pradeepProcessorB;
@@ -53,46 +54,13 @@ public class MainProcess implements ApplicationRunner {
         LOGGER.info("Main Process | ============================== | commencing");
         try {
             downloadManager.download(ApCo.DOWNLOAD_FROM_DATE);
-            praNameUtils.validate();
+            praNameUtils.validateDownload();
             uploadManager.upload(ApCo.DOWNLOAD_FROM_DATE);
-            //---------------------------------------------------------
-            nseFileUtils.getFilesToBeComputed(ApCo.DOWNLOAD_FROM_DATE, ()->ApCo.PRADEEP_FILE_NAME)
-                    .forEach( forDate -> {
-                        LOGGER.info(".");
-                        LOGGER.info("{} | for:{}", ApCo.PRADEEP_FILE_NAME, forDate.toString());
-                        try {
-                            pradeepProcessor.process(forDate);
-                            //pradeepProcessorB.process(forDate);
-                        } catch (Exception e) {
-                            LOGGER.error("ERROR: {}", e);
-                        }
-                    });
-            nseFileUtils.getFilesToBeComputed(ApCo.DOWNLOAD_FROM_DATE, ()->ApCo.MANISH_FILE_NAME)
-                    .forEach( forDate -> {
-                        LOGGER.info(".");
-                        LOGGER.info("{} | for:{}", ApCo.MANISH_FILE_NAME, forDate.toString());
-                        try {
-                            manishProcessor.process(forDate);
-                        } catch (Exception e) {
-                            LOGGER.error("ERROR: {}", e);
-                        }
-                    });
-            nseFileUtils.getFilesToBeComputed(ApCo.DOWNLOAD_FROM_DATE, ()->ApCo.MANISH_FILE_NAME_B)
-                    .forEach( forDate -> {
-                        LOGGER.info(".");
-                        LOGGER.info("{} | for:{}", ApCo.MANISH_FILE_NAME_B, forDate.toString());
-                        try {
-                            manishProcessorB.process(ApCo.MANISH_FILE_NAME_B, forDate);
-                        } catch (Exception e) {
-                            LOGGER.error("ERROR: {}", e);
-                        }
-                    });
-
-            reportsProcessorC.process();
-
+            reportManager.report();
         } catch(Exception e) {
             LOGGER.error("ERROR: {}", e);
         }
+        LOGGER.info(".");
         LOGGER.info("Main Process | ============================== | finishing");
     }
 }

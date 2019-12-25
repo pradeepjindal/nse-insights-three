@@ -28,38 +28,27 @@ public class BpDownloader {
     private final PraNameUtils praNameUtils;
     private final DownloadUtils downloadFile;
 
-    public BpDownloader(NseFileUtils nseFileUtils, PraNameUtils praNameUtils, DownloadUtils downloadFile) {
+    private final DownloadHelper downloadHelper;
+
+    public BpDownloader(NseFileUtils nseFileUtils, PraNameUtils praNameUtils, DownloadUtils downloadFile, DownloadHelper downloadHelper) {
         this.nseFileUtils = nseFileUtils;
         this.praNameUtils = praNameUtils;
         this.downloadFile = downloadFile;
+        this.downloadHelper = downloadHelper;
     }
 
-    public void download(LocalDate fromDate) {
+    public void downloadFromDate(LocalDate fromDate) {
         String dataDir = ApCo.BASE_DATA_DIR + File.separator + ApCo.BP_DIR_NAME;
         List<String> filesDownloadUrl = prepareFileUrls(fromDate);
-
-        filesDownloadUrl.stream().forEach( fileUrl -> {
-            downloadFile.downloadFile(fileUrl, dataDir,
-                    () -> (dataDir + File.separator + fileUrl.substring(ApCo.BP_BASE_URL.length()+1)),
-                    filePathAndName -> {
-                        transformToCsvNew(filePathAndName);
-                    });
-        });
+        download(dataDir, filesDownloadUrl);
     }
 
     public void downloadFromLast() {
         String dataDir = ApCo.BASE_DATA_DIR + File.separator + ApCo.BP_DIR_NAME;
         String str = praNameUtils.getLatestFileNameFor(dataDir, ApCo.PRA_BP_FILE_PREFIX, ApCo.PRA_DATA_FILE_EXT, 1);
-        LocalDate dt = DateUtils.getLocalDateFromPath(str);
+        LocalDate dt = DateUtils.getLocalDateFromPath(str, ApCo.PRA_FILE_NAME_DATE_REGEX);
         List<String> filesDownloadUrl = prepareFileUrls(dt.plusDays(1));
-
-        filesDownloadUrl.stream().forEach( fileUrl -> {
-            downloadFile.downloadFile(fileUrl, dataDir,
-                    () -> (dataDir + File.separator + fileUrl.substring(ApCo.BP_BASE_URL.length()+1)),
-                    filePathAndName -> {
-                        transformToCsvNew(filePathAndName);
-                    });
-        });
+        download(dataDir, filesDownloadUrl);
     }
 
     private List<String> prepareFileUrls(LocalDate downloadFromDate) {
@@ -71,6 +60,19 @@ public class BpDownloader {
                 ApCo.NSE_BP_FILE_EXT);
         filesToBeDownloaded.removeAll(nseFileUtils.fetchFileNames(dataDir, null, null));
         return nseFileUtils.constructFileDownloadUrl(ApCo.BP_BASE_URL, filesToBeDownloaded);
+    }
+
+    private void download(String dataDir, List<String> urlListToBeDownloaded) {
+        if(downloadHelper.shouldDownload(urlListToBeDownloaded)) {
+            urlListToBeDownloaded.stream().forEach( fileUrl -> {
+                downloadFile.downloadFile(fileUrl, dataDir,
+                        () -> (dataDir + File.separator + fileUrl.substring(ApCo.BP_BASE_URL.length()+1)),
+                        filePathAndName -> {
+                            transformToCsvNew(filePathAndName);
+                        });
+            });
+        }
+
     }
 
     private void transformToCsvNew(String downloadedDirAndFileName) {

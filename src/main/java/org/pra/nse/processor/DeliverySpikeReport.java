@@ -44,11 +44,14 @@ public class DeliverySpikeReport {
         List<LocalDate> list = tradeDates.stream().collect(Collectors.toList());
         Collections.sort(list);
 
-        String fileName = "DeliverySpikeReport-" + list.get(list.size()-1) + ".csv";
+        String forDate = list.get(list.size()-1).toString();
+        //String fileName = "DeliverySpikeReport-" + list.get(list.size()-1) + ".csv";
+        String fileName = "DeliverySpikeReport-" + forDate + ".csv";
         String toDir = ApCo.BASE_DATA_DIR +File.separator+ ApCo.PRA_DATA_DIR_NAME +File.separator+ fileName;
 
+        LOGGER.info("{} | for:{}", "DeliverySpikeReport", forDate.toString());
         if(nseFileUtils.isFileExist(toDir)) {
-            LOGGER.info("report already present (regeneration and email would be skipped): {}", toDir);
+            LOGGER.warn("report already present (regeneration and email would be skipped): {}", toDir);
             return;
         }
 
