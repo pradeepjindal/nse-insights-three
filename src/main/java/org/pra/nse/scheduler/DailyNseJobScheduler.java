@@ -1,10 +1,10 @@
 package org.pra.nse.scheduler;
 
-import org.pra.nse.ApCo;
 import org.pra.nse.csv.download.DownloadManager;
+import org.pra.nse.csv.transform.TransformManager;
 import org.pra.nse.db.upload.UploadManager;
 import org.pra.nse.processor.ReportManager;
-import org.pra.nse.util.PraNameUtils;
+import org.pra.nse.util.PraFileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -29,19 +29,24 @@ public class DailyNseJobScheduler implements SchedulingConfigurer {
 
     private final int POOL_SIZE = 4;
 
-    private final PraNameUtils praNameUtils;
+    private final PraFileUtils praFileUtils;
 
     private final DownloadManager downloadManager;
+    private final TransformManager transformManager;
     private final UploadManager uploadManager;
     private final ReportManager reportManager;
 
     private TaskScheduler taskScheduler;
     private ScheduledFuture<?> dailyJob;
 
-    public DailyNseJobScheduler(PraNameUtils praNameUtils,
-                                DownloadManager downloadManager, UploadManager uploadManager, ReportManager reportManager) {
-        this.praNameUtils = praNameUtils;
+    public DailyNseJobScheduler(PraFileUtils praFileUtils,
+                                DownloadManager downloadManager,
+                                TransformManager transformManager,
+                                UploadManager uploadManager,
+                                ReportManager reportManager) {
+        this.praFileUtils = praFileUtils;
         this.downloadManager = downloadManager;
+        this.transformManager = transformManager;
         this.uploadManager = uploadManager;
         this.reportManager = reportManager;
     }
@@ -68,10 +73,16 @@ public class DailyNseJobScheduler implements SchedulingConfigurer {
                     @Override
                     public void run() {
                         LOGGER.info("cron executed at "+ new Date());
-                        downloadManager.download(ApCo.DOWNLOAD_FROM_DATE);
-                        praNameUtils.validateDownload();
-                        uploadManager.upload(ApCo.DOWNLOAD_FROM_DATE);
-                        reportManager.report();
+                        try {
+                            downloadManager.download();
+                            transformManager.transform();
+                            uploadManager.upload();
+                            if(praFileUtils.validateDownload()) {
+                                reportManager.report();
+                            }
+                        } catch(Exception e) {
+                            LOGGER.error("ERROR: {}", e);
+                        }
                     }
                 }, new Trigger() {
                     @Override

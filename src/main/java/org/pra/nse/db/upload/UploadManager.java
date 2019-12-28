@@ -23,21 +23,21 @@ public class UploadManager {
         this.deliveryMarketUploader = deliveryMarketUploader;
     }
 
-    public void upload(LocalDate fromDate) {
+    public void upload() {
         LOGGER.info(".");
-        LOGGER.info("==================== Upload Manager");
-
-//        cashMarketUploader.uploadFromDate(fromDate);
-//        LOGGER.info("--------------------");
-//        futureMarketUploader.uploadFromDate(fromDate);
-//        LOGGER.info("--------------------");
-//        deliveryMarketUploader.uploadFromDate(fromDate);
+        LOGGER.info("____________________ Upload Manager");
 
         cashMarketUploader.uploadFromLast();
         LOGGER.info("--------------------");
         futureMarketUploader.uploadFromLast();
         LOGGER.info("--------------------");
         deliveryMarketUploader.uploadFromLast();
+
+//        cashMarketUploader.uploadFromDate();
+//        LOGGER.info("--------------------");
+//        futureMarketUploader.uploadFromDate();
+//        LOGGER.info("--------------------");
+//        deliveryMarketUploader.uploadFromDate();
 
         LOGGER.info("==================== Upload Manager");
     }

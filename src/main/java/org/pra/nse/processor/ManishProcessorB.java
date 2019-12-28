@@ -10,7 +10,7 @@ import org.pra.nse.csv.writer.ManishCsvWriterB;
 import org.pra.nse.email.EmailService;
 import org.pra.nse.util.DateUtils;
 import org.pra.nse.util.NseFileUtils;
-import org.pra.nse.util.PraNameUtils;
+import org.pra.nse.util.PraFileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
@@ -31,27 +31,27 @@ public class ManishProcessorB {
     private final FmMerger fmMerger;
     private final DmMerger dmMerger;
     private final NseFileUtils nseFileUtils;
-    private final PraNameUtils praNameUtils;
+    private final PraFileUtils praFileUtils;
     private final ManishCsvWriterB csvWriterB;
     private final EmailService emailService;
 
     public ManishProcessorB(CmMerger cmMerger, FmMerger fmMerger, DmMerger dmMerger,
                             ManishCsvWriterB csvWriterB,
                             NseFileUtils nseFileUtils,
-                            PraNameUtils praNameUtils,
+                            PraFileUtils praFileUtils,
                             EmailService emailService) {
         this.cmMerger = cmMerger;
         this.fmMerger = fmMerger;
         this.dmMerger = dmMerger;
         this.csvWriterB = csvWriterB;
         this.nseFileUtils = nseFileUtils;
-        this.praNameUtils = praNameUtils;
+        this.praFileUtils = praFileUtils;
         this.emailService = emailService;
     }
 
     public void process(String outputFileName, LocalDate processForDate) throws IOException {
         String outputPathAndFileNameForFixFile = ProCo.outputPathAndFileNameForFixFile(outputFileName);
-        String foLatestFileName = praNameUtils.getLatestFileNameFor(ApCo.FM_FILES_PATH, ApCo.PRA_FM_FILE_PREFIX, ApCo.PRA_DATA_FILE_EXT, 1, processForDate);
+        String foLatestFileName = praFileUtils.getLatestFileNameFor(ApCo.FM_FILES_PATH, ApCo.PRA_FM_FILE_PREFIX, ApCo.PRA_DATA_FILE_EXT, 1, processForDate);
         String outputPathAndFileNameForDynamicFile = ProCo.outputPathAndFileNameForDynamicFile(outputFileName, foLatestFileName);
 
         if(nseFileUtils.isFileExist(outputPathAndFileNameForDynamicFile)) {

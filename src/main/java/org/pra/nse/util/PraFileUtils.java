@@ -1,5 +1,6 @@
 package org.pra.nse.util;
 
+
 import org.pra.nse.ApCo;
 import org.pra.nse.ProCo;
 import org.slf4j.Logger;
@@ -13,8 +14,8 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.util.Locale;
 
 @Component
-public class PraNameUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PraNameUtils.class);
+public class PraFileUtils {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PraFileUtils.class);
 
     public String getLatestFileNameFor(String fileDir, String filePrefix, String fileExt, int occurrence) {
         return getLatestFileNameFor(fileDir, filePrefix, fileExt, occurrence, LocalDate.now());
@@ -51,7 +52,7 @@ public class PraNameUtils {
         return LocalDate.parse(localDate.toString(), dtf).toString();
     }
 
-    public void validateDownload() {
+    public Boolean validateDownload() {
         String cmDate = getLatestFileNameFor(ApCo.CM_FILES_PATH, ApCo.PRA_CM_FILE_PREFIX, ApCo.PRA_DATA_FILE_EXT, 1);
         cmDate = ProCo.extractDate(cmDate);
 
@@ -61,14 +62,16 @@ public class PraNameUtils {
         String mtDate = getLatestFileNameFor(ApCo.DM_FILES_PATH, ApCo.PRA_DM_FILE_PREFIX, ApCo.PRA_DATA_FILE_EXT, 1);
         mtDate = ProCo.extractDate(mtDate);
 
-        if(cmDate.equals(foDate) && cmDate.equals(mtDate)) {
-            LOGGER.info("All Files are Accounted for: PROCESSING");
+        if(cmDate.equals(foDate) && foDate.equals(mtDate)) {
+            LOGGER.info("All Files are Accounted for");
+            return true;
         } else {
             LOGGER.warn("Not All files are available: fo=[fo-{}], cm=[cm-{}], mt=[mt-{}]", foDate, cmDate, mtDate);
             LOGGER.info("fo=[fo-{}]", foDate);
             LOGGER.info("cm=[cm-{}]", cmDate);
             LOGGER.info("mt=[mt-{}]", mtDate);
-            throw new RuntimeException("All Files Does Not Exist: ABORTING");
+            //throw new RuntimeException("All Files Does Not Exist: ABORTING");
+            return false;
         }
     }
 }

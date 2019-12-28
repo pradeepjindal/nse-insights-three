@@ -9,7 +9,7 @@ import org.pra.nse.db.repository.NseCashMarketRepository;
 import org.pra.nse.util.DateUtils;
 
 import org.pra.nse.util.NseFileUtils;
-import org.pra.nse.util.PraNameUtils;
+import org.pra.nse.util.PraFileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -27,19 +27,19 @@ public class CashMarketUploader extends BaseUploader {
     private final NseCashMarketRepository repository;
     private final NseCashMarketDao dao;
     private final NseFileUtils nseFileUtils;
-    private final PraNameUtils praNameUtils;
+    private final PraFileUtils praFileUtils;
     private final CmCsvReader csvReader;
 
     public CashMarketUploader(NseCashMarketRepository nseCashMarketRepository,
                               NseCashMarketDao nseCashMarketDao,
                               NseFileUtils nseFileUtils,
-                              PraNameUtils praNameUtils,
+                              PraFileUtils praFileUtils,
                               CmCsvReader cmCsvReader ) {
-        super(praNameUtils, ApCo.CM_DIR_NAME, ApCo.PRA_CM_FILE_PREFIX);
+        super(praFileUtils, ApCo.CM_DIR_NAME, ApCo.PRA_CM_FILE_PREFIX);
         this.repository = nseCashMarketRepository;
         this.dao = nseCashMarketDao;
         this.nseFileUtils = nseFileUtils;
-        this.praNameUtils = praNameUtils;
+        this.praFileUtils = praFileUtils;
         this.csvReader = cmCsvReader;
     }
 

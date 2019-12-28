@@ -8,7 +8,7 @@ import org.pra.nse.db.model.NseDeliveryMarketTab;
 import org.pra.nse.db.repository.NseDeliveryMarketRepository;
 import org.pra.nse.util.DateUtils;
 import org.pra.nse.util.NseFileUtils;
-import org.pra.nse.util.PraNameUtils;
+import org.pra.nse.util.PraFileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -26,19 +26,19 @@ public class DeliveryMarketUploader extends BaseUploader {
     private final NseDeliveryMarketRepository repository;
     private final NseDeliveryMarketDao dao;
     private final NseFileUtils nseFileUtils;
-    private final PraNameUtils praNameUtils;
+    private final PraFileUtils praFileUtils;
     private final DmCsvReader csvReader;
 
     public DeliveryMarketUploader(NseDeliveryMarketRepository nseDeliveryMarketRepository,
                                   NseDeliveryMarketDao nseDeliveryMarketDao,
                                   NseFileUtils nseFileUtils,
-                                  PraNameUtils praNameUtils,
+                                  PraFileUtils praFileUtils,
                                   DmCsvReader csvReader) {
-        super(praNameUtils, ApCo.DM_DIR_NAME, ApCo.PRA_DM_FILE_PREFIX);
+        super(praFileUtils, ApCo.DM_DIR_NAME, ApCo.PRA_DM_FILE_PREFIX);
         this.repository = nseDeliveryMarketRepository;
         this.dao = nseDeliveryMarketDao;
         this.nseFileUtils = nseFileUtils;
-        this.praNameUtils = praNameUtils;
+        this.praFileUtils = praFileUtils;
         this.csvReader = csvReader;
     }
 

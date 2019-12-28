@@ -6,7 +6,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 public class ApCo {
-    public static final LocalDate DOWNLOAD_FROM_DATE = LocalDate.of(2019,12,1);
+    public static final LocalDate DOWNLOAD_FROM_DATE = LocalDate.of(2019,12,26);
     public static final LocalDate EMAIL_FROM_DATE = LocalDate.of(2019,12,1);
     public static final LocalTime DAILY_DOWNLOAD_TIME = LocalTime.of(18,0,0,0);
 
@@ -57,10 +57,14 @@ public class ApCo {
     public static final String PRA_DM_FILE_PREFIX = "mt-";
     public static final String PRA_BP_FILE_PREFIX = "bp-";
 
-    public static final String NSE_CM_FILE_SUFFIX = "bhav.csv.zip";
-    public static final String NSE_FO_FILE_SUFFIX = "bhav.csv.zip";
+    public static final String NSE_CM_FILE_SUFFIX = "bhav.csv";
+    public static final String NSE_FM_FILE_SUFFIX = "bhav.csv";
+
+    public static final String NSE_CM_FILE_EXT = ".zip";
+    public static final String NSE_FM_FILE_EXT = ".zip";
     public static final String NSE_DM_FILE_EXT = ".DAT";
     public static final String NSE_BP_FILE_EXT = ".csv";
+
     public static final String PRA_DATA_FILE_EXT = ".csv";
     public static final String DEFAULT_FILE_EXT = ".csv";
 

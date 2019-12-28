@@ -68,7 +68,7 @@ public class DeliverySpikeReport {
 
         if(nseFileUtils.isFileExist(toDir)) {
             emailService.sendAttachmentMessage("ca.manish.thakkar@gmail.com", fileName, fileName, toDir, null);
-            emailService.sendAttachmentMessage("shweta.jindal@haldiram.com", fileName, fileName, toDir, null);
+            //emailService.sendAttachmentMessage("shweta.jindal@haldiram.com", fileName, fileName, toDir, null);
         } else {
             LOGGER.error("skipping email: DeliverySpikeReport not found at disk");
         }

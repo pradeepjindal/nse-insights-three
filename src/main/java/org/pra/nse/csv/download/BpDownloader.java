@@ -2,9 +2,8 @@ package org.pra.nse.csv.download;
 
 import org.pra.nse.ApCo;
 import org.pra.nse.util.DateUtils;
-import org.pra.nse.util.DownloadUtils;
 import org.pra.nse.util.NseFileUtils;
-import org.pra.nse.util.PraNameUtils;
+import org.pra.nse.util.PraFileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -24,58 +23,57 @@ import java.util.stream.Stream;
 public class BpDownloader {
     private static final Logger LOGGER = LoggerFactory.getLogger(BpDownloader.class);
 
+    private final String Data_Dir = ApCo.BASE_DATA_DIR + File.separator + ApCo.BP_DIR_NAME;
     private final NseFileUtils nseFileUtils;
-    private final PraNameUtils praNameUtils;
-    private final DownloadUtils downloadFile;
+    private final PraFileUtils praFileUtils;
 
     private final DownloadHelper downloadHelper;
 
-    public BpDownloader(NseFileUtils nseFileUtils, PraNameUtils praNameUtils, DownloadUtils downloadFile, DownloadHelper downloadHelper) {
+    public BpDownloader(NseFileUtils nseFileUtils, PraFileUtils praFileUtils, DownloadHelper downloadHelper) {
         this.nseFileUtils = nseFileUtils;
-        this.praNameUtils = praNameUtils;
-        this.downloadFile = downloadFile;
+        this.praFileUtils = praFileUtils;
         this.downloadHelper = downloadHelper;
     }
 
+    public void downloadFromDate() {
+        downloadFromDate(ApCo.DOWNLOAD_FROM_DATE);
+    }
     public void downloadFromDate(LocalDate fromDate) {
-        String dataDir = ApCo.BASE_DATA_DIR + File.separator + ApCo.BP_DIR_NAME;
         List<String> filesDownloadUrl = prepareFileUrls(fromDate);
-        download(dataDir, filesDownloadUrl);
+        looper(filesDownloadUrl);
     }
 
     public void downloadFromLast() {
         String dataDir = ApCo.BASE_DATA_DIR + File.separator + ApCo.BP_DIR_NAME;
-        String str = praNameUtils.getLatestFileNameFor(dataDir, ApCo.PRA_BP_FILE_PREFIX, ApCo.PRA_DATA_FILE_EXT, 1);
-        LocalDate dt = DateUtils.getLocalDateFromPath(str, ApCo.PRA_FILE_NAME_DATE_REGEX);
-        List<String> filesDownloadUrl = prepareFileUrls(dt.plusDays(1));
-        download(dataDir, filesDownloadUrl);
+        String str = praFileUtils.getLatestFileNameFor(dataDir, ApCo.PRA_BP_FILE_PREFIX, ApCo.PRA_DATA_FILE_EXT, 1);
+        LocalDate dateOfLatestFile = DateUtils.getLocalDateFromPath(str, ApCo.PRA_FILE_NAME_DATE_REGEX);
+        List<String> filesDownloadUrl = prepareFileUrls(dateOfLatestFile.plusDays(1));
+        looper(filesDownloadUrl);
     }
 
     private List<String> prepareFileUrls(LocalDate downloadFromDate) {
-        String dataDir = ApCo.BASE_DATA_DIR + File.separator + ApCo.BP_DIR_NAME;
         List<String> filesToBeDownloaded = nseFileUtils.constructFileNames(
                 downloadFromDate,
                 ApCo.NSE_BP_FILE_NAME_DATE_FORMAT,
                 ApCo.NSE_BP_FILE_PREFIX,
                 ApCo.NSE_BP_FILE_EXT);
-        filesToBeDownloaded.removeAll(nseFileUtils.fetchFileNames(dataDir, null, null));
+        filesToBeDownloaded.removeAll(nseFileUtils.fetchFileNames(Data_Dir, null, null));
         return nseFileUtils.constructFileDownloadUrl(ApCo.BP_BASE_URL, filesToBeDownloaded);
     }
 
-    private void download(String dataDir, List<String> urlListToBeDownloaded) {
+    private void looper(List<String> urlListToBeDownloaded) {
         if(downloadHelper.shouldDownload(urlListToBeDownloaded)) {
             urlListToBeDownloaded.stream().forEach( fileUrl -> {
-                downloadFile.downloadFile(fileUrl, dataDir,
-                        () -> (dataDir + File.separator + fileUrl.substring(ApCo.BP_BASE_URL.length()+1)),
+                downloadHelper.downloadFile(fileUrl, Data_Dir,
+                        () -> (Data_Dir + File.separator + fileUrl.substring(ApCo.BP_BASE_URL.length()+1)),
                         filePathAndName -> {
-                            transformToCsvNew(filePathAndName);
+                            transformToCsv(filePathAndName);
                         });
             });
         }
-
     }
 
-    private void transformToCsvNew(String downloadedDirAndFileName) {
+    private void transformToCsv(String downloadedDirAndFileName) {
         int firstIndex = downloadedDirAndFileName.lastIndexOf("_");
         String csvFileName = ApCo.PRA_BP_FILE_PREFIX
                 + DateUtils.transformDate(downloadedDirAndFileName.substring(firstIndex+1, firstIndex+9))

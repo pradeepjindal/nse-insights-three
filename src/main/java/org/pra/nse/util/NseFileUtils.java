@@ -74,8 +74,31 @@ public class NseFileUtils {
         ZipEntry zipEntry;
         zipEntry = zis.getNextEntry();
         while (zipEntry != null) {
-            String csvFilePathAndName = destDir + File.separator + filePrefix
-                    + DateUtils.extractDate(zipEntry.getName()) + ApCo.PRA_DATA_FILE_EXT;
+            String csvFilePathAndName = destDir + File.separator + filePrefix + DateUtils.extractDate(zipEntry.getName()) + ApCo.PRA_DATA_FILE_EXT;
+            File csvFile = new File(csvFilePathAndName);
+            FileOutputStream fos = new FileOutputStream(csvFile);
+            int len;
+            while ((len = zis.read(buffer)) > 0) {
+                fos.write(buffer, 0, len);
+            }
+            fos.close();
+            zipEntry = zis.getNextEntry();
+        }
+        zis.closeEntry();
+        zis.close();
+    }
+    public void unzipNew2(String outputDirAndFileName, String filePrefix) throws IOException {
+        int lastIndex = outputDirAndFileName.lastIndexOf(File.separator);
+        File destDir = new File(outputDirAndFileName.substring(0, lastIndex));
+        byte[] buffer = new byte[1024];
+        ZipInputStream zis = null;
+        zis = new ZipInputStream(new FileInputStream(outputDirAndFileName));
+        ZipEntry zipEntry;
+        zipEntry = zis.getNextEntry();
+        while (zipEntry != null) {
+            String csvFilePathAndName = destDir + File.separator
+                    + filePrefix + DateUtils.extractDate(zipEntry.getName())
+                    + ApCo.PRA_DATA_FILE_EXT;
             File csvFile = new File(csvFilePathAndName);
             FileOutputStream fos = new FileOutputStream(csvFile);
             int len;
@@ -89,29 +112,24 @@ public class NseFileUtils {
         zis.close();
     }
 
-    public List<String> constructFileNames(LocalDate fromDate, String fileDateFormat,
-                                            String filePrefix, String fileSuffix) {
+    public List<String> constructFileNames(LocalDate fromDate, String fileNameDateFormat, String filePrefix, String fileSuffix) {
         List<String> fileNameList = new ArrayList<>();
-        LocalDate localDate = fromDate;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(fileDateFormat);
+        LocalDate rollingDate = fromDate;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(fileNameDateFormat);
         LocalDate todayDate = LocalDate.now();
-        while(localDate.compareTo(todayDate) < 1) {
+        int weekends = 0;
+        while(rollingDate.compareTo(todayDate) < 1) {
             //LOGGER.info(localDate);
             //LOGGER.info(localDate.getDayOfWeek());
-            if("SATURDAY".equals(localDate.getDayOfWeek().name()) || "SUNDAY".equals(localDate.getDayOfWeek().name())) {
-                // Deepawali, sunday trading
-                if(localDate.equals(LocalDate.of(2019,10,27))) {
-                    LOGGER.info("Deepawali Found");
-                    String newFileName = filePrefix + formatter.format(localDate).toUpperCase() + fileSuffix;
-                    fileNameList.add(newFileName);
-                }
+            if(rollingDate.equals(LocalDate.of(2019,10,27))) {
+                LOGGER.info("Deepawali Found - {}", rollingDate);
+                calcAndAddFileName(fileNameList, filePrefix, formatter, fileSuffix, rollingDate);
+            } else if(DateUtils.isWeekend(rollingDate)) {
+                weekends++;
             } else {
-                //LOGGER.info(localDate.getDayOfWeek());
-                String newFileName = filePrefix + formatter.format(localDate).toUpperCase() + fileSuffix;
-                //LOGGER.info(newFileName);
-                fileNameList.add(newFileName);
+                calcAndAddFileName(fileNameList, filePrefix, formatter, fileSuffix, rollingDate);
             }
-            localDate = localDate.plusDays(1);
+            rollingDate = rollingDate.plusDays(1);
         }
         //fileNamesToBeDownloaded.forEach(fileName -> LOGGER.info(fileName));
         LOGGER.info("Total File Count ({}): {}", filePrefix, fileNameList.size());
@@ -200,6 +218,13 @@ public class NseFileUtils {
         });
         return localDates;
         //return (List<LocalDate>)localDateMap.values();
+    }
+
+    private void calcAndAddFileName(List<String> fileNameList, String filePrefix, DateTimeFormatter formatter, String fileSuffix, LocalDate localDate) {
+        //LOGGER.info(localDate.getDayOfWeek());
+        String newFileName = filePrefix + formatter.format(localDate).toUpperCase() + fileSuffix;
+        //LOGGER.info(newFileName);
+        fileNameList.add(newFileName);
     }
 
 }

@@ -4,6 +4,7 @@ import org.pra.nse.ApCo;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -43,22 +44,29 @@ public class DateUtils {
     }
 
     public static LocalDate toLocalDate(String date, String format) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
-        //convert String to LocalDate
+        //if I send month NOV or Nov it works
+        DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                .parseCaseInsensitive()
+                .appendPattern(format)
+                .toFormatter(Locale.US);
+        LocalDate dateTime = LocalDate.parse(date, formatter);
         return LocalDate.parse(date, formatter);
-    }
+}
 
     public static String extractDate(String inputString) {
+        return extractDate(inputString, "\\d{2}[A-Z]{3}\\d{4}", "ddMMMyyyy");
+    }
+    public static String extractDate(String inputString, String dateRegex, String dateFormat) {
         //String input = "John Doe at:2016-01-16 Notes:This is a test";
         //String regex = " at:(\\d{4}-\\d{2}-\\d{2}) Notes:";
-        String regex = "\\d{2}[A-Z]{3}\\d{4}";
+        String regex = dateRegex;
         Matcher m = Pattern.compile(regex).matcher(inputString);
         if (m.find()) {
             DateTimeFormatter dtf = new DateTimeFormatterBuilder()
-                    // case insensitive to parse JAN and FEB
+                    // case insensitive to parse JAN and Jan
                     .parseCaseInsensitive()
                     // add pattern
-                    .appendPattern("ddMMMyyyy")
+                    .appendPattern(dateFormat)
                     // create formatter (use English Locale to parse month names)
                     .toFormatter(Locale.ENGLISH);
             return LocalDate.parse(m.group(0), dtf).toString();
@@ -68,17 +76,7 @@ public class DateUtils {
         }
     }
 
-    public static String getDateStringFromPath(String fileNameWithPth, String dateRegex) {
-        dateRegex = null == dateRegex ? ApCo.DEFAULT_FILE_NAME_DATE_REGEX : dateRegex;
-        int count=0;
-        String[] allMatches = new String[2];
-        //String regex = "\\d{4}-\\d{2}-\\d{2}"; //2019-12-31
-        Matcher m = Pattern.compile(dateRegex).matcher(fileNameWithPth);
-        while (m.find()) {
-            allMatches[count] = m.group();
-        }
-        return allMatches[0];
-    }
+
 
     public static LocalDate getLocalDateFromPath(String fileNameWithPth) {
         return getLocalDateFromPath(fileNameWithPth, ApCo.DEFAULT_FILE_NAME_DATE_REGEX);
@@ -94,7 +92,19 @@ public class DateUtils {
         return (dateStr == null ? null : toLocalDate(dateStr, dateFormat));
     }
 
-    public static boolean isItWeekend(LocalDate date) {
-        return "SATURDAY".equals(date.getDayOfWeek()) || "SUNDAY".equals(date.getDayOfWeek());
+    private static String getDateStringFromPath(String fileNameWithPth, String dateRegex) {
+        dateRegex = null == dateRegex ? ApCo.DEFAULT_FILE_NAME_DATE_REGEX : dateRegex;
+        int count=0;
+        String[] allMatches = new String[2];
+        //String regex = "\\d{4}-\\d{2}-\\d{2}"; //2019-12-31
+        Matcher m = Pattern.compile(dateRegex).matcher(fileNameWithPth);
+        while (m.find()) {
+            allMatches[count] = m.group();
+        }
+        return allMatches[0];
+    }
+
+    public static boolean isWeekend(LocalDate date) {
+        return "SATURDAY".equals(date.getDayOfWeek().name()) || "SUNDAY".equals(date.getDayOfWeek().name());
     }
 }

@@ -10,7 +10,7 @@ import org.pra.nse.db.repository.NseFutureMarketRepository;
 import org.pra.nse.db.repository.NseOptionMarketRepository;
 import org.pra.nse.util.DateUtils;
 import org.pra.nse.util.NseFileUtils;
-import org.pra.nse.util.PraNameUtils;
+import org.pra.nse.util.PraFileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -30,21 +30,21 @@ public class FutureMarketUploader extends BaseUploader {
     private final NseOptionMarketRepository optionMarketRepository;
     private final NseFutureMarketDao dao;
     private final NseFileUtils nseFileUtils;
-    private final PraNameUtils praNameUtils;
+    private final PraFileUtils praFileUtils;
     private final FmCsvReader csvReader;
 
     public FutureMarketUploader(NseFutureMarketRepository nseFutureMarketRepository,
                                 NseOptionMarketRepository nseOptionMarketRepository,
                                 NseFutureMarketDao nseFutureMarketDao,
                                 NseFileUtils nseFileUtils,
-                                PraNameUtils praNameUtils,
+                                PraFileUtils praFileUtils,
                                 FmCsvReader fmCsvReader) {
-        super(praNameUtils, ApCo.FM_DIR_NAME, ApCo.PRA_FM_FILE_PREFIX);
+        super(praFileUtils, ApCo.FM_DIR_NAME, ApCo.PRA_FM_FILE_PREFIX);
         this.futureMarketRepository = nseFutureMarketRepository;
         this.optionMarketRepository = nseOptionMarketRepository;
         this.dao = nseFutureMarketDao;
         this.nseFileUtils = nseFileUtils;
-        this.praNameUtils = praNameUtils;
+        this.praFileUtils = praFileUtils;
         this.csvReader = fmCsvReader;
     }
 

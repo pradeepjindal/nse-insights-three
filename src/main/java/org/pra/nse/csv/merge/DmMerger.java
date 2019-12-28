@@ -4,7 +4,7 @@ import org.pra.nse.ApCo;
 import org.pra.nse.csv.bean.in.DmBean;
 import org.pra.nse.csv.bean.out.PraBean;
 import org.pra.nse.csv.read.DmCsvReader;
-import org.pra.nse.util.PraNameUtils;
+import org.pra.nse.util.PraFileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -17,11 +17,11 @@ import java.util.Map;
 public class DmMerger {
     private static final Logger LOGGER = LoggerFactory.getLogger(DmMerger.class);
 
-    private final PraNameUtils praNameUtils;
+    private final PraFileUtils praFileUtils;
     private final DmCsvReader csvReader;
 
-    public DmMerger(PraNameUtils praNameUtils, DmCsvReader csvReader) {
-        this.praNameUtils = praNameUtils;
+    public DmMerger(PraFileUtils praFileUtils, DmCsvReader csvReader) {
+        this.praFileUtils = praFileUtils;
         this.csvReader = csvReader;
     }
 
@@ -29,10 +29,10 @@ public class DmMerger {
         LOGGER.info("MT-Merge | for date:[{}]", forDate);
         String fromFile;
         //fromFile = fileUtils.getLatestFileNameForMat(1);
-        fromFile = praNameUtils.getLatestFileNameFor(ApCo.DM_FILES_PATH, ApCo.PRA_DM_FILE_PREFIX, ApCo.PRA_DATA_FILE_EXT,1, forDate);
+        fromFile = praFileUtils.getLatestFileNameFor(ApCo.DM_FILES_PATH, ApCo.PRA_DM_FILE_PREFIX, ApCo.PRA_DATA_FILE_EXT,1, forDate);
         Map<String, DmBean> mtLatestBeanMap = csvReader.read(fromFile);
         //fromFile = fileUtils.getLatestFileNameForMat(2);
-        fromFile = praNameUtils.getLatestFileNameFor(ApCo.DM_FILES_PATH, ApCo.PRA_DM_FILE_PREFIX, ApCo.PRA_DATA_FILE_EXT,2, forDate);
+        fromFile = praFileUtils.getLatestFileNameFor(ApCo.DM_FILES_PATH, ApCo.PRA_DM_FILE_PREFIX, ApCo.PRA_DATA_FILE_EXT,2, forDate);
         Map<String, DmBean> matPreviousBeanMap = csvReader.read(fromFile);
         praBeans.forEach(praBean -> {
             if(mtLatestBeanMap.containsKey(praBean.getSymbol()) && matPreviousBeanMap.containsKey(praBean.getSymbol())) {

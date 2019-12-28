@@ -25,17 +25,9 @@ public class DownloadManager {
         this.bpDownloader = bpDownloader;
     }
 
-    public void download(LocalDate fromDate) {
+    public void download() {
         LOGGER.info(".");
-        LOGGER.info("==================== Download Manager");
-
-//        cmDownloader.download(fromDate);
-//        LOGGER.info("--------------------");
-//        fmDownloader.downloadFromDate(fromDate);
-//        LOGGER.info("--------------------");
-//        dmDownloader.downloadFromDate(fromDate);
-//        LOGGER.info("--------------------");
-//        bpDownloader.downloadFromDate(fromDate);
+        LOGGER.info("____________________ Download Manager");
 
         cmDownloader.downloadFromLast();
         LOGGER.info("--------------------");
@@ -44,6 +36,14 @@ public class DownloadManager {
         dmDownloader.downloadFromLast();
         LOGGER.info("--------------------");
         bpDownloader.downloadFromLast();
+
+//        cmDownloader.downloadFromDate();
+//        LOGGER.info("--------------------");
+//        fmDownloader.downloadFromDate();
+//        LOGGER.info("--------------------");
+//        dmDownloader.downloadFromDate();
+//        LOGGER.info("--------------------");
+//        bpDownloader.downloadFromDate();
 
         LOGGER.info("==================== Download Manager");
     }
