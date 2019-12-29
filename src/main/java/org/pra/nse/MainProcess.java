@@ -41,7 +41,7 @@ public class MainProcess implements ApplicationRunner {
             downloadManager.download();
             transformManager.transform();
             uploadManager.upload();
-            if(praFileUtils.validateDownload()) {
+            if(praFileUtils.validateDownload() != null) {
                 reportManager.report();
             }
         } catch(Exception e) {

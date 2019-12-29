@@ -52,7 +52,7 @@ public class PraFileUtils {
         return LocalDate.parse(localDate.toString(), dtf).toString();
     }
 
-    public Boolean validateDownload() {
+    public String validateDownload() {
         String cmDate = getLatestFileNameFor(ApCo.CM_FILES_PATH, ApCo.PRA_CM_FILE_PREFIX, ApCo.PRA_DATA_FILE_EXT, 1);
         cmDate = ProCo.extractDate(cmDate);
 
@@ -64,14 +64,14 @@ public class PraFileUtils {
 
         if(cmDate.equals(foDate) && foDate.equals(mtDate)) {
             LOGGER.info("All Files are Accounted for");
-            return true;
+            return cmDate;
         } else {
             LOGGER.warn("Not All files are available: fo=[fo-{}], cm=[cm-{}], mt=[mt-{}]", foDate, cmDate, mtDate);
             LOGGER.info("fo=[fo-{}]", foDate);
             LOGGER.info("cm=[cm-{}]", cmDate);
             LOGGER.info("mt=[mt-{}]", mtDate);
             //throw new RuntimeException("All Files Does Not Exist: ABORTING");
-            return false;
+            return null;
         }
     }
 }
