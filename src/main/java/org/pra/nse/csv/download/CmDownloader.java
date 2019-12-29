@@ -43,7 +43,11 @@ public class CmDownloader {
         String str = praFileUtils.getLatestFileNameFor(Data_Dir, ApCo.PRA_CM_FILE_PREFIX, ApCo.PRA_DATA_FILE_EXT, 1);
         LocalDate dateOfLatestFile = DateUtils.getLocalDateFromPath(str, ApCo.PRA_FILE_NAME_DATE_REGEX);
         List<String> filesDownloadUrls = prepareFileUrls(dateOfLatestFile.plusDays(1));
-        if(filesDownloadUrls.size() == 1 && dateOfLatestFile.isBefore(LocalDate.now())) {
+        LocalDate dateOfNextFile = DateUtils.getLocalDateFromPath(
+                filesDownloadUrls.get(0),
+                ApCo.NSE_CM_FILE_NAME_DATE_REGEX,
+                ApCo.NSE_CM_FILE_NAME_DATE_FORMAT);
+        if(filesDownloadUrls.size() == 1 && dateOfNextFile.isBefore(LocalDate.now())) {
             download(filesDownloadUrls.get(0));
         } else {
             looper(filesDownloadUrls);

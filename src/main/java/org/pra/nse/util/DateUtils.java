@@ -51,7 +51,7 @@ public class DateUtils {
                 .toFormatter(Locale.US);
         LocalDate dateTime = LocalDate.parse(date, formatter);
         return LocalDate.parse(date, formatter);
-}
+    }
 
     public static String extractDate(String inputString) {
         return extractDate(inputString, "\\d{2}[A-Z]{3}\\d{4}", "ddMMMyyyy");

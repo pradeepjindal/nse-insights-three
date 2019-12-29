@@ -7,14 +7,16 @@ import java.time.format.DateTimeFormatter;
 
 public class ApCo {
     public static final LocalDate DOWNLOAD_FROM_DATE = LocalDate.of(2019,12,26);
-    public static final LocalDate EMAIL_FROM_DATE = LocalDate.of(2019,12,1);
+    public static final LocalDate EMAIL_FROM_DATE = LocalDate.of(2019,12,26);
     public static final LocalTime DAILY_DOWNLOAD_TIME = LocalTime.of(18,0,0,0);
 
     public static final String BASE_DATA_DIR = System.getProperty("user.home");
 
     //https://www.nseindia.com/content/historical/EQUITIES/2019/SEP/cm10SEP2019bhav.csv.zip
-    public static final String CM_BASE_URL = "https://www.nseindia.com/content/historical/EQUITIES/2019";
-    public static final String FO_BASE_URL = "https://www.nseindia.com/content/historical/DERIVATIVES/2019";
+    //public static final String CM_BASE_URL = "https://www.nseindia.com/content/historical/EQUITIES/2019";
+    public static final String CM_BASE_URL = "https://www.nseindia.com/content/historical/EQUITIES";
+    //public static final String FO_BASE_URL = "https://www.nseindia.com/content/historical/DERIVATIVES/2019";
+    public static final String FO_BASE_URL = "https://www.nseindia.com/content/historical/DERIVATIVES";
     public static final String DM_BASE_URL = "https://www.nseindia.com/archives/equities/mto";
     //https://www.nseindia.com/content/nsccl/fao_participant_vol_13092019.csv
     public static final String BP_BASE_URL = "https://www.nseindia.com/content/nsccl";

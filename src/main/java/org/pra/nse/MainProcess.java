@@ -50,4 +50,5 @@ public class MainProcess implements ApplicationRunner {
         LOGGER.info(".");
         LOGGER.info("Main Process | ============================== | finishing");
     }
+
 }

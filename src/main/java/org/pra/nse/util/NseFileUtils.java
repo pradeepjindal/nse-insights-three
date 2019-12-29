@@ -117,6 +117,7 @@ public class NseFileUtils {
         LocalDate rollingDate = fromDate;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(fileNameDateFormat);
         LocalDate todayDate = LocalDate.now();
+        //LocalDate todayDate = LocalDate.of(2018, 12, 31);
         int weekends = 0;
         while(rollingDate.compareTo(todayDate) < 1) {
             //LOGGER.info(localDate);
@@ -167,7 +168,7 @@ public class NseFileUtils {
         List<String> filesUrl;
         filesUrl = filesToBeDownloaded.stream().map(fileName -> {
             //LOGGER.info(fileName);
-            return baseUrl + "/" + fileName.substring(4, 7) + "/" + fileName;
+            return baseUrl + "/" + fileName.substring(7, 11) + "/" + fileName.substring(4, 7) + "/" + fileName;
         }).collect(Collectors.toList());
         //String newUrl = baseUrl + "/" + localDate.getMonth().name().substring(0,3) + "/fo" + formatter.format(localDate).toUpperCase() + "bhav.csv.zip";
         //filesUrl.forEach(LOGGER::info);
