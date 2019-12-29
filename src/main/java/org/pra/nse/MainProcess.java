@@ -35,10 +35,10 @@ public class MainProcess implements ApplicationRunner {
     }
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         LOGGER.info("Main Process | ============================== | commencing");
         try {
-            //downloadManager.download();
+            downloadManager.download();
             transformManager.transform();
             uploadManager.upload();
             if(praFileUtils.validateDownload()) {
