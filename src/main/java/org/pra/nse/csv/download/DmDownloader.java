@@ -41,6 +41,8 @@ public class DmDownloader {
         String str = praFileUtils.getLatestFileNameFor(Data_Dir, ApCo.PRA_DM_FILE_PREFIX, ApCo.PRA_DATA_FILE_EXT, 1);
         LocalDate dateOfLatestFile = DateUtils.getLocalDateFromPath(str, ApCo.PRA_FILE_NAME_DATE_REGEX);
         List<String> filesDownloadUrls = prepareFileUrls(dateOfLatestFile.plusDays(1));
+        if(filesDownloadUrls == null || filesDownloadUrls.size() == 0) return;
+
         LocalDate dateOfNextFile = DateUtils.getLocalDateFromPath(
                 filesDownloadUrls.get(0),
                 ApCo.NSE_DM_FILE_NAME_DATE_REGEX,

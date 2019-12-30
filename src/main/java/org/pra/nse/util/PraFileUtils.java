@@ -63,7 +63,6 @@ public class PraFileUtils {
         mtDate = ProCo.extractDate(mtDate);
 
         if(cmDate.equals(foDate) && foDate.equals(mtDate)) {
-            LOGGER.info("All Files are Accounted for");
             return cmDate;
         } else {
             LOGGER.warn("Not All files are available: fo=[fo-{}], cm=[cm-{}], mt=[mt-{}]", foDate, cmDate, mtDate);
